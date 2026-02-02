@@ -543,12 +543,20 @@
 
         // Supabase Logic
         async function signIn() {
-            const { data, error } = await supabase.auth.signInAnonymously();
-            if (error) {
-                alert('Login failed: ' + error.message);
-            } else {
-                console.log('Logged in:', data);
-                checkUser();
+            console.log("Login button clicked...");
+            try {
+                const { data, error } = await supabase.auth.signInAnonymously();
+
+                if (error) {
+                    console.error("Supabase Auth Error:", error);
+                    alert('로그인 실패: ' + error.message + '\n\n[체크포인트]\nSupabase 대시보드 > Authentication > Providers 에서 "Anonymous"가 Enable 되어 있는지 확인해주세요!');
+                } else {
+                    console.log('Logged in successfully:', data);
+                    checkUser();
+                }
+            } catch (err) {
+                console.error("Unexpected Error:", err);
+                alert("알 수 없는 오류가 발생했습니다. 콘솔(F12)을 확인해주세요.");
             }
         }
 
