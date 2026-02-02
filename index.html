@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina English | 몰입형 영어 학습</title>
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase (UMD Build for Browser Support) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
     <!-- Modern Font Family -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -347,7 +347,8 @@
     <header>
         <div class="logo">Lumina English</div>
         <div class="status-bar">
-            <div class="badge" id="auth-btn" onclick="signIn()">
+            <!-- ID for JS Binding -->
+            <div class="badge" id="auth-btn">
                 <span>👤 Login</span>
             </div>
             <div class="badge" id="stats-badge" style="display: none;">
@@ -400,13 +401,6 @@
     </footer>
 
     <script>
-        // Supabase Config
-        const SUPABASE_URL = 'https://vhptyvnutvdloekbtoef.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZocHR5dm51dHZkbG9la2J0b2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzg1MjIsImV4cCI6MjA4NTYxNDUyMn0.ino0oJp0g705pD3W2Q36O-GGVgdXWTouoCxOw0OlC7Y';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let currentUser = null;
-
         // Data
         const vocabulary = [
             {
@@ -434,7 +428,7 @@
         const quizData = [
             {
                 question: "Which word means 'very tired'?",
-                targetWord: "Exhausted", // Used for DB logging
+                targetWord: "Exhausted",
                 options: ["Energetic", "Exhausted", "Lively", "Quick"],
                 correct: 1
             },
@@ -479,8 +473,6 @@
 
         function nextWord() {
             currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
-
-            // Slide out effect
             wordDisplay.style.opacity = '0';
             setTimeout(() => {
                 updateCard();
@@ -501,10 +493,8 @@
             const data = quizData[currentQuizIndex];
             const qEl = document.getElementById('quiz-question');
             const oGrid = document.getElementById('quiz-options');
-
             qEl.innerHTML = data.question;
             oGrid.innerHTML = '';
-
             data.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -515,7 +505,6 @@
         }
 
         async function checkAnswer(btn, index, correctIndex, targetWord) {
-            // Disable all buttons
             const buttons = document.querySelectorAll('.option-btn');
             buttons.forEach(b => b.disabled = true);
             const isCorrect = index === correctIndex;
@@ -528,42 +517,63 @@
                 buttons[correctIndex].classList.add('correct');
             }
 
-            // Save to DB
             if (currentUser) {
                 await saveHistory(targetWord, isCorrect);
                 await fetchStats();
             }
 
-            // Next quiz after delay
             setTimeout(() => {
                 currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
                 loadQuiz();
             }, 1500);
         }
 
-        // Supabase Logic
+        // Supabase Config
+        const SUPABASE_URL = 'https://vhptyvnutvdloekbtoef.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZocHR5dm51dHZkbG9la2J0b2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzg1MjIsImV4cCI6MjA4NTYxNDUyMn0.ino0oJp0g705pD3W2Q36O-GGVgdXWTouoCxOw0OlC7Y';
+
+        let supabase = null;
+        let currentUser = null;
+
+        // Initialization Logic
+        window.addEventListener('load', () => {
+            console.log('App loaded. Initializing Supabase...');
+            try {
+                if (!window.supabase) throw new Error("Supabase library not loaded.");
+
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log("Supabase initialized.");
+
+                // Bind Auth Button
+                authBtn.addEventListener('click', signIn);
+
+                // Initial Checks
+                checkUser();
+
+            } catch (err) {
+                console.error("Initialization failed:", err);
+                alert("⚠️ 앱 초기화 실패: " + err.message + "\n인터넷 연결을 확인하세요.");
+            }
+        });
+
         async function signIn() {
-            console.log("Login button clicked...");
+            if (!supabase) return;
+            console.log("Attempting login...");
             try {
                 const { data, error } = await supabase.auth.signInAnonymously();
-
-                if (error) {
-                    console.error("Supabase Auth Error:", error);
-                    alert('로그인 실패: ' + error.message + '\n\n[체크포인트]\nSupabase 대시보드 > Authentication > Providers 에서 "Anonymous"가 Enable 되어 있는지 확인해주세요!');
-                } else {
-                    console.log('Logged in successfully:', data);
-                    checkUser();
-                }
+                if (error) throw error;
+                console.log('Login success:', data);
+                await checkUser();
             } catch (err) {
-                console.error("Unexpected Error:", err);
-                alert("알 수 없는 오류가 발생했습니다. 콘솔(F12)을 확인해주세요.");
+                console.error("Auth Error:", err);
+                alert("로그인 실패: " + err.message + "\nSupabase에서 Anonymous Login이 켜져 있는지 확인하세요.");
             }
         }
 
         async function checkUser() {
+            if (!supabase) return;
             const { data: { user } } = await supabase.auth.getUser();
             currentUser = user;
-
             if (user) {
                 authBtn.style.display = 'none';
                 statsBadge.style.display = 'flex';
@@ -575,40 +585,32 @@
         }
 
         async function saveHistory(word, isCorrect) {
-            const { error } = await supabase
-                .from('learning_history')
-                .insert({
-                    user_id: currentUser.id,
-                    word: word,
-                    is_correct: isCorrect
-                });
-
-            if (error) console.error('Error saving history:', error);
+            if (!supabase || !currentUser) return;
+            const { error } = await supabase.from('learning_history').insert({
+                user_id: currentUser.id,
+                word: word,
+                is_correct: isCorrect
+            });
+            if (error) console.error('Save Error:', error);
         }
 
         async function fetchStats() {
-            if (!currentUser) return;
-
+            if (!supabase || !currentUser) return;
             const { count, error } = await supabase
                 .from('learning_history')
-                .select('*', { count: 'exact', head: true }); // Head request for count
+                .select('*', { count: 'exact', head: true });
 
             if (error) {
-                console.error('Error fetching stats:', error);
-                // Helpful check for "relation does not exist" (42P01)
-                if (error.code === '42P01') {
-                    console.warn("Table missing! Please run the schema.sql in Supabase SQL Editor.");
-                    alert("⚠️ 설정 필요: Supabase에 'learning_history' 테이블이 없습니다.\n제공해드린 schema.sql 파일을 실행해주세요.");
-                }
+                console.error('Stats Error:', error);
+                if (error.code === '42P01') console.warn("Table missing.");
             } else {
                 learnedCount.textContent = count;
             }
         }
 
-        // Init
+        // Init UI
         updateCard();
         loadQuiz();
-        checkUser(); // Check auth on load
 
     </script>
 </body>
