@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina English | 몰입형 영어 학습</title>
-    <!-- Supabase (UMD Build for Browser Support) -->
+    <!-- Supabase (UMD Build) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-    <!-- Modern Font Family -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -29,9 +29,9 @@
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -44,11 +44,9 @@
             overflow-x: hidden;
         }
 
-        /* Ambient Background Glow */
+        /* Ambient Background */
         .ambient-light {
             position: fixed;
-            top: -10%;
-            left: -10%;
             width: 50vw;
             height: 50vw;
             background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
@@ -58,10 +56,13 @@
             animation: float 10s infinite alternate ease-in-out;
         }
 
+        .ambient-light:nth-child(1) {
+            top: -10%;
+            left: -10%;
+        }
+
         .ambient-light:nth-child(2) {
-            top: auto;
             bottom: -10%;
-            left: auto;
             right: -10%;
             background: radial-gradient(circle, #ec489950 0%, transparent 70%);
             animation-delay: -5s;
@@ -84,8 +85,8 @@
             justify-content: space-between;
             align-items: center;
             max-width: 1200px;
-            margin: 0 auto;
             width: 100%;
+            margin: 0 auto;
         }
 
         .logo {
@@ -94,13 +95,11 @@
             background: linear-gradient(to right, #c084fc, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
         }
 
         .status-bar {
             display: flex;
             gap: 1rem;
-            align-items: center;
         }
 
         .badge {
@@ -111,7 +110,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            backdrop-filter: blur(4px);
             border: 1px solid var(--glass-border);
             cursor: pointer;
             transition: 0.3s;
@@ -121,7 +119,7 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Main Layout */
+        /* Main */
         main {
             flex: 1;
             display: flex;
@@ -131,15 +129,7 @@
             gap: 4rem;
         }
 
-        /* Section Titles */
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* Flashcard Component */
+        /* Flashcard */
         .flashcard-container {
             perspective: 1000px;
             width: 320px;
@@ -154,8 +144,6 @@
             text-align: center;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .flashcard.flipped {
@@ -176,6 +164,7 @@
             backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             padding: 2rem;
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .card-front h3 {
@@ -186,35 +175,11 @@
             margin-bottom: 1rem;
         }
 
-        .card-hint {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-        }
-
         .card-back {
             transform: rotateY(180deg);
             background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
         }
 
-        .definition {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #c084fc;
-            margin-bottom: 1.5rem;
-        }
-
-        .example {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        /* Controls */
         .controls {
             display: flex;
             gap: 1rem;
@@ -228,18 +193,16 @@
             padding: 0.8rem 1.5rem;
             border-radius: 12px;
             cursor: pointer;
-            font-family: inherit;
             font-weight: 600;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: 0.3s;
         }
 
         .btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
         }
 
         .btn-primary {
@@ -252,7 +215,7 @@
             border-radius: 50%;
         }
 
-        /* Quiz Section */
+        /* Quiz */
         .quiz-section {
             width: 100%;
             max-width: 600px;
@@ -261,12 +224,6 @@
             border-radius: 24px;
             padding: 2rem;
             text-align: center;
-        }
-
-        .quiz-question {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            line-height: 1.5;
         }
 
         .options-grid {
@@ -282,7 +239,7 @@
             border-radius: 12px;
             color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: 0.2s;
             text-align: left;
         }
 
@@ -302,177 +259,106 @@
             background: rgba(239, 68, 68, 0.2);
             border-color: #ef4444;
             color: #f87171;
-            animation: shake 0.5s;
         }
 
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-5px);
-            }
-
-            75% {
-                transform: translateX(5px);
-            }
-        }
-
-        /* Footer */
         footer {
+            text-align: center;
             padding: 2rem;
             color: var(--text-muted);
-            font-size: 0.9rem;
             margin-top: auto;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Ambient Background -->
     <div class="ambient-light"></div>
     <div class="ambient-light"></div>
 
     <header>
         <div class="logo">Lumina English</div>
         <div class="status-bar">
-            <!-- ID for JS Binding -->
-            <div class="badge" id="auth-btn">
-                <span>👤 Login</span>
-            </div>
-            <div class="badge" id="stats-badge" style="display: none;">
-                <span>📚 Learned: <span id="learned-count">0</span></span>
-            </div>
+            <div class="badge" id="auth-btn" onclick="signIn()"><span>👤 Login</span></div>
+            <div class="badge" id="stats-badge" style="display: none;"><span>📚 Learned: <span
+                        id="learned-count">0</span></span></div>
         </div>
     </header>
 
     <main>
-        <!-- Flashcard Section -->
         <section>
             <div class="flashcard-container" onclick="toggleCard()">
                 <div class="flashcard" id="flashcard">
                     <div class="card-face card-front">
                         <span style="font-size: 3rem; margin-bottom: 0.5rem;">✨</span>
-                        <h3 id="word-display">Serendipity</h3>
+                        <h3 id="word-display">Loading...</h3>
                         <div class="card-hint">Click to reveal meaning</div>
                     </div>
                     <div class="card-face card-back">
-                        <div class="definition" id="definition-display">뜻밖의 행운</div>
-                        <p class="example" id="example-display">"Finding twenty dollars in my pocket was pure
-                            serendipity."</p>
+                        <div class="definition" id="definition-display">...</div>
+                        <p class="example" id="example-display">...</p>
                     </div>
                 </div>
             </div>
-
             <div class="controls">
-                <button class="btn btn-icon" onclick="speakWord()" aria-label="Listen">
-                    🔊
-                </button>
-                <button class="btn btn-primary" onclick="nextWord()">
-                    Next Word
-                    <span>→</span>
-                </button>
+                <button class="btn btn-icon" onclick="speakWord()" aria-label="Listen">🔊</button>
+                <button class="btn btn-primary" onclick="nextWord()">Next Word <span>→</span></button>
             </div>
         </section>
 
-        <!-- Quiz Section -->
         <section class="quiz-section">
             <h2 style="font-size: 1.5rem; margin-bottom: 2rem;">Quick Quiz</h2>
-            <div class="quiz-question" id="quiz-question">Which word is a synonym for <strong>"Happy"</strong>?</div>
-            <div class="options-grid" id="quiz-options">
-                <!-- Options injected by JS -->
-            </div>
+            <div class="quiz-question" id="quiz-question">Loading...</div>
+            <div class="options-grid" id="quiz-options"></div>
         </section>
     </main>
 
-    <footer>
-        Designed for immersive learning © 2026
-    </footer>
+    <footer>Designed for immersive learning © 2026</footer>
 
     <script>
-        // Data
+        // 1. Global Error Handler
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            alert('Critical Script Error:\n' + msg + '\nLine: ' + lineNo);
+            return false;
+        };
+
+        // 2. Data
         const vocabulary = [
-            {
-                word: "Serendipity",
-                definition: "뜻밖의 행운",
-                example: "Finding good friends in a new city is a serendipity."
-            },
-            {
-                word: "Resilient",
-                definition: "회복력 있는",
-                example: "She is resilient enough to bounce back from any failure."
-            },
-            {
-                word: "Ephemeral",
-                definition: "수명이 짧은, 덧없는",
-                example: "Fashion trends are often ephemeral."
-            },
-            {
-                word: "Eloquent",
-                definition: "유창한, 감정을 드러내는",
-                example: "He gave an eloquent speech that moved everyone."
-            }
+            { word: "Serendipity", definition: "뜻밖의 행운", example: "Finding good friends in a new city is a serendipity." },
+            { word: "Resilient", definition: "회복력 있는", example: "She is resilient enough to bounce back from any failure." },
+            { word: "Ephemeral", definition: "수명이 짧은, 덧없는", example: "Fashion trends are often ephemeral." },
+            { word: "Eloquent", definition: "유창한", example: "He gave an eloquent speech that moved everyone." }
         ];
 
         const quizData = [
-            {
-                question: "Which word means 'very tired'?",
-                targetWord: "Exhausted",
-                options: ["Energetic", "Exhausted", "Lively", "Quick"],
-                correct: 1
-            },
-            {
-                question: "Select the synonym for 'Beautiful'",
-                targetWord: "Beautiful",
-                options: ["Ugly", "Gorgeous", "Plain", "Ordinary"],
-                correct: 1
-            },
-            {
-                question: "What is the opposite of 'Strong'?",
-                targetWord: "Strong (Antonym)",
-                options: ["Weak", "Powerful", "Tough", "Heavy"],
-                correct: 0
-            }
+            { question: "Synonym for 'Very Tired'?", targetWord: "Exhausted", options: ["Energetic", "Exhausted", "Lively", "Quick"], correct: 1 },
+            { question: "Synonym for 'Beautiful'?", targetWord: "Beautiful", options: ["Ugly", "Gorgeous", "Plain", "Ordinary"], correct: 1 },
+            { question: "Antonym of 'Strong'?", targetWord: "Strong", options: ["Weak", "Powerful", "Tough", "Heavy"], correct: 0 }
         ];
 
         let currentWordIndex = 0;
         let currentQuizIndex = 0;
 
-        // Flashcard Elements
-        const flashcard = document.getElementById('flashcard');
-        const wordDisplay = document.getElementById('word-display');
-        const defDisplay = document.getElementById('definition-display');
-        const exDisplay = document.getElementById('example-display');
-        const authBtn = document.getElementById('auth-btn');
-        const statsBadge = document.getElementById('stats-badge');
-        const learnedCount = document.getElementById('learned-count');
+        // Supabase Globals
+        let supabase = null;
+        let currentUser = null;
+        const SUPABASE_URL = 'https://vhptyvnutvdloekbtoef.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZocHR5dm51dHZkbG9la2J0b2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzg1MjIsImV4cCI6MjA4NTYxNDUyMn0.ino0oJp0g705pD3W2Q36O-GGVgdXWTouoCxOw0OlC7Y';
 
-        // Logic
+        // 3. UI Functions (Defined Globally)
         function updateCard() {
             const data = vocabulary[currentWordIndex];
-            wordDisplay.textContent = data.word;
-            defDisplay.textContent = data.definition;
-            exDisplay.textContent = `"${data.example}"`;
-            flashcard.classList.remove('flipped');
+            document.getElementById('word-display').textContent = data.word;
+            document.getElementById('definition-display').textContent = data.definition;
+            document.getElementById('example-display').textContent = `"${data.example}"`;
+            document.getElementById('flashcard').classList.remove('flipped');
         }
 
         function toggleCard() {
-            flashcard.classList.toggle('flipped');
+            document.getElementById('flashcard').classList.toggle('flipped');
         }
 
         function nextWord() {
             currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
+            const wordDisplay = document.getElementById('word-display');
             wordDisplay.style.opacity = '0';
             setTimeout(() => {
                 updateCard();
@@ -485,16 +371,15 @@
             utterance.lang = 'en-US';
             utterance.rate = 0.8;
             window.speechSynthesis.speak(utterance);
-            event.stopPropagation();
+            if (window.event) window.event.stopPropagation();
         }
 
-        // Quiz Logic
         function loadQuiz() {
             const data = quizData[currentQuizIndex];
-            const qEl = document.getElementById('quiz-question');
+            document.getElementById('quiz-question').innerHTML = data.question;
             const oGrid = document.getElementById('quiz-options');
-            qEl.innerHTML = data.question;
             oGrid.innerHTML = '';
+
             data.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -504,7 +389,7 @@
             });
         }
 
-        async function checkAnswer(btn, index, correctIndex, targetWord) {
+        function checkAnswer(btn, index, correctIndex, targetWord) {
             const buttons = document.querySelectorAll('.option-btn');
             buttons.forEach(b => b.disabled = true);
             const isCorrect = index === correctIndex;
@@ -517,9 +402,9 @@
                 buttons[correctIndex].classList.add('correct');
             }
 
-            if (currentUser) {
-                await saveHistory(targetWord, isCorrect);
-                await fetchStats();
+            // Async Save (Don't await to avoid UI blocking)
+            if (currentUser && supabase) {
+                saveHistory(targetWord, isCorrect).catch(err => console.error(err));
             }
 
             setTimeout(() => {
@@ -528,45 +413,15 @@
             }, 1500);
         }
 
-        // Supabase Config
-        const SUPABASE_URL = 'https://vhptyvnutvdloekbtoef.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZocHR5dm51dHZkbG9la2J0b2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzg1MjIsImV4cCI6MjA4NTYxNDUyMn0.ino0oJp0g705pD3W2Q36O-GGVgdXWTouoCxOw0OlC7Y';
-
-        let supabase = null;
-        let currentUser = null;
-
-        // Initialization Logic
-        window.addEventListener('load', () => {
-            console.log('App loaded. Initializing Supabase...');
-            try {
-                if (!window.supabase) throw new Error("Supabase library not loaded.");
-
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log("Supabase initialized.");
-
-                // Bind Auth Button
-                authBtn.addEventListener('click', signIn);
-
-                // Initial Checks
-                checkUser();
-
-            } catch (err) {
-                console.error("Initialization failed:", err);
-                alert("⚠️ 앱 초기화 실패: " + err.message + "\n인터넷 연결을 확인하세요.");
-            }
-        });
-
+        // 4. Supabase Functions
         async function signIn() {
-            if (!supabase) return;
-            console.log("Attempting login...");
+            if (!supabase) return alert("System initializing... try again in a moment.");
             try {
                 const { data, error } = await supabase.auth.signInAnonymously();
                 if (error) throw error;
-                console.log('Login success:', data);
                 await checkUser();
             } catch (err) {
-                console.error("Auth Error:", err);
-                alert("로그인 실패: " + err.message + "\nSupabase에서 Anonymous Login이 켜져 있는지 확인하세요.");
+                alert("Login Error: " + err.message + "\nCheck if 'Anonymous Sign-in' is enabled in Supabase.");
             }
         }
 
@@ -574,44 +429,58 @@
             if (!supabase) return;
             const { data: { user } } = await supabase.auth.getUser();
             currentUser = user;
+
+            const authBtn = document.getElementById('auth-btn');
+            const statsBadge = document.getElementById('stats-badge');
+
             if (user) {
-                authBtn.style.display = 'none';
-                statsBadge.style.display = 'flex';
+                if (authBtn) authBtn.style.display = 'none';
+                if (statsBadge) statsBadge.style.display = 'flex';
                 fetchStats();
             } else {
-                authBtn.style.display = 'flex';
-                statsBadge.style.display = 'none';
+                if (authBtn) authBtn.style.display = 'flex';
+                if (statsBadge) statsBadge.style.display = 'none';
             }
         }
 
         async function saveHistory(word, isCorrect) {
-            if (!supabase || !currentUser) return;
-            const { error } = await supabase.from('learning_history').insert({
+            await supabase.from('learning_history').insert({
                 user_id: currentUser.id,
                 word: word,
                 is_correct: isCorrect
             });
-            if (error) console.error('Save Error:', error);
+            fetchStats();
         }
 
         async function fetchStats() {
-            if (!supabase || !currentUser) return;
             const { count, error } = await supabase
                 .from('learning_history')
                 .select('*', { count: 'exact', head: true });
 
-            if (error) {
-                console.error('Stats Error:', error);
-                if (error.code === '42P01') console.warn("Table missing.");
-            } else {
-                learnedCount.textContent = count;
+            if (!error && document.getElementById('learned-count')) {
+                document.getElementById('learned-count').textContent = count;
             }
         }
 
-        // Init UI
-        updateCard();
-        loadQuiz();
+        // 5. Init (DOMContentLoaded)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("App Starting...");
+            updateCard();
+            loadQuiz();
 
+            // Init Supabase
+            if (window.supabase && window.supabase.createClient) {
+                try {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log("Supabase Ready");
+                    checkUser();
+                } catch (e) {
+                    console.error("Supabase Init Failed:", e);
+                }
+            } else {
+                console.warn("Supabase SDK not found.");
+            }
+        });
     </script>
 </body>
 
