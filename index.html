@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina English | 몰입형 영어 학습</title>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Modern Font Family -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Pretendard:wght@400;600&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -51,6 +57,7 @@
             opacity: 0.4;
             animation: float 10s infinite alternate ease-in-out;
         }
+
         .ambient-light:nth-child(2) {
             top: auto;
             bottom: -10%;
@@ -61,8 +68,13 @@
         }
 
         @keyframes float {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(30px, 30px); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(30px, 30px);
+            }
         }
 
         /* Header */
@@ -83,6 +95,30 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .badge:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Main Layout */
@@ -155,7 +191,7 @@
             color: var(--text-muted);
             margin-top: 1rem;
             padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
         }
 
@@ -203,14 +239,14 @@
         .btn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none;
         }
-        
+
         .btn-icon {
             padding: 0.8rem;
             border-radius: 50%;
@@ -251,9 +287,9 @@
         }
 
         .option-btn:hover {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
-            border-color: rgba(255,255,255,0.3);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .option-btn.correct {
@@ -270,9 +306,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
         }
 
         /* Footer */
@@ -291,6 +337,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Ambient Background -->
@@ -299,7 +346,14 @@
 
     <header>
         <div class="logo">Lumina English</div>
-        <div class="badge" style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem;">Daily Challenge</div>
+        <div class="status-bar">
+            <div class="badge" id="auth-btn" onclick="signIn()">
+                <span>👤 Login</span>
+            </div>
+            <div class="badge" id="stats-badge" style="display: none;">
+                <span>📚 Learned: <span id="learned-count">0</span></span>
+            </div>
+        </div>
     </header>
 
     <main>
@@ -314,7 +368,8 @@
                     </div>
                     <div class="card-face card-back">
                         <div class="definition" id="definition-display">뜻밖의 행운</div>
-                        <p class="example" id="example-display">"Finding twenty dollars in my pocket was pure serendipity."</p>
+                        <p class="example" id="example-display">"Finding twenty dollars in my pocket was pure
+                            serendipity."</p>
                     </div>
                 </div>
             </div>
@@ -345,6 +400,13 @@
     </footer>
 
     <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://vhptyvnutvdloekbtoef.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZocHR5dm51dHZkbG9la2J0b2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzg1MjIsImV4cCI6MjA4NTYxNDUyMn0.ino0oJp0g705pD3W2Q36O-GGVgdXWTouoCxOw0OlC7Y';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+
         // Data
         const vocabulary = [
             {
@@ -372,16 +434,19 @@
         const quizData = [
             {
                 question: "Which word means 'very tired'?",
+                targetWord: "Exhausted", // Used for DB logging
                 options: ["Energetic", "Exhausted", "Lively", "Quick"],
                 correct: 1
             },
             {
                 question: "Select the synonym for 'Beautiful'",
+                targetWord: "Beautiful",
                 options: ["Ugly", "Gorgeous", "Plain", "Ordinary"],
                 correct: 1
             },
             {
                 question: "What is the opposite of 'Strong'?",
+                targetWord: "Strong (Antonym)",
                 options: ["Weak", "Powerful", "Tough", "Heavy"],
                 correct: 0
             }
@@ -395,8 +460,11 @@
         const wordDisplay = document.getElementById('word-display');
         const defDisplay = document.getElementById('definition-display');
         const exDisplay = document.getElementById('example-display');
+        const authBtn = document.getElementById('auth-btn');
+        const statsBadge = document.getElementById('stats-badge');
+        const learnedCount = document.getElementById('learned-count');
 
-        // Init
+        // Logic
         function updateCard() {
             const data = vocabulary[currentWordIndex];
             wordDisplay.textContent = data.word;
@@ -411,8 +479,8 @@
 
         function nextWord() {
             currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
-            
-            // Slide out effect (simple opacity transition for text)
+
+            // Slide out effect
             wordDisplay.style.opacity = '0';
             setTimeout(() => {
                 updateCard();
@@ -425,9 +493,7 @@
             utterance.lang = 'en-US';
             utterance.rate = 0.8;
             window.speechSynthesis.speak(utterance);
-            
-            // Prevent event bubbling if button is inside card container (it isn't, but good practice)
-            event.stopPropagation(); 
+            event.stopPropagation();
         }
 
         // Quiz Logic
@@ -435,7 +501,7 @@
             const data = quizData[currentQuizIndex];
             const qEl = document.getElementById('quiz-question');
             const oGrid = document.getElementById('quiz-options');
-            
+
             qEl.innerHTML = data.question;
             oGrid.innerHTML = '';
 
@@ -443,35 +509,100 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.textContent = opt;
-                btn.onclick = () => checkAnswer(btn, index, data.correct);
+                btn.onclick = () => checkAnswer(btn, index, data.correct, data.targetWord);
                 oGrid.appendChild(btn);
             });
         }
 
-        function checkAnswer(btn, index, correctIndex) {
+        async function checkAnswer(btn, index, correctIndex, targetWord) {
             // Disable all buttons
             const buttons = document.querySelectorAll('.option-btn');
             buttons.forEach(b => b.disabled = true);
+            const isCorrect = index === correctIndex;
 
-            if (index === correctIndex) {
+            if (isCorrect) {
                 btn.classList.add('correct');
                 btn.textContent += ' ✅';
-                
-                // Next quiz after delay
-                setTimeout(() => {
-                    currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
-                    loadQuiz();
-                }, 1500);
             } else {
                 btn.classList.add('wrong');
                 buttons[correctIndex].classList.add('correct');
             }
+
+            // Save to DB
+            if (currentUser) {
+                await saveHistory(targetWord, isCorrect);
+                await fetchStats();
+            }
+
+            // Next quiz after delay
+            setTimeout(() => {
+                currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
+                loadQuiz();
+            }, 1500);
         }
 
-        // START
+        // Supabase Logic
+        async function signIn() {
+            const { data, error } = await supabase.auth.signInAnonymously();
+            if (error) {
+                alert('Login failed: ' + error.message);
+            } else {
+                console.log('Logged in:', data);
+                checkUser();
+            }
+        }
+
+        async function checkUser() {
+            const { data: { user } } = await supabase.auth.getUser();
+            currentUser = user;
+
+            if (user) {
+                authBtn.style.display = 'none';
+                statsBadge.style.display = 'flex';
+                fetchStats();
+            } else {
+                authBtn.style.display = 'flex';
+                statsBadge.style.display = 'none';
+            }
+        }
+
+        async function saveHistory(word, isCorrect) {
+            const { error } = await supabase
+                .from('learning_history')
+                .insert({
+                    user_id: currentUser.id,
+                    word: word,
+                    is_correct: isCorrect
+                });
+
+            if (error) console.error('Error saving history:', error);
+        }
+
+        async function fetchStats() {
+            if (!currentUser) return;
+
+            const { count, error } = await supabase
+                .from('learning_history')
+                .select('*', { count: 'exact', head: true }); // Head request for count
+
+            if (error) {
+                console.error('Error fetching stats:', error);
+                // Helpful check for "relation does not exist" (42P01)
+                if (error.code === '42P01') {
+                    console.warn("Table missing! Please run the schema.sql in Supabase SQL Editor.");
+                    alert("⚠️ 설정 필요: Supabase에 'learning_history' 테이블이 없습니다.\n제공해드린 schema.sql 파일을 실행해주세요.");
+                }
+            } else {
+                learnedCount.textContent = count;
+            }
+        }
+
+        // Init
         updateCard();
         loadQuiz();
+        checkUser(); // Check auth on load
 
     </script>
 </body>
+
 </html>
